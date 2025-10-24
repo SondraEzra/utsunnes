@@ -38,6 +38,16 @@
                 text-align: center;
                 font-weight: bold;
             }
+            .error-message{
+                background-color: #f8d7da;
+                color: #721c24;
+                padding: 15px;
+                margin-bottom: 20px;
+                border: 1px solid #f5c6cb;
+                border-radius: 5px;
+                text-align: center;
+                font-weight: bold;
+            }
             table{
                 width: 100%;
                 border-collapse: collapse;
@@ -52,7 +62,6 @@
                 background-color: #f8f9fa;
                 font-weight: bold;
                 color: #333;
-                width: 30%;
             }
             td{
                 color: #666;
@@ -75,25 +84,75 @@
             }
         </style>
     </head>
+
+<?php
+    $show_error = false;
+    $error_message = "";
+
+    if (isset($_POST['submit'])) {
+        
+        $nama_depan = htmlspecialchars($_POST['nama_depan']);
+        $nama_belakang = htmlspecialchars($_POST['nama_belakang']);
+        $asal_kota = htmlspecialchars($_POST['asal_kota']);
+        $umur = (int)htmlspecialchars($_POST['umur']);
+
+        if ($umur < 10) {
+            $show_error = true;
+            $error_message = "Umur yang Anda masukan ($umur tahun) tidak valid. <br> Minimal umur pendaftaran adalah 10 tahun.";
+        } else {
+            $nama_lengkap = $nama_depan . " " . $nama_belakang;
+            $umur_display = $umur . " tahun";
+        }
+
+    } else {
+        $show_error = true;
+        $error_message = "Silakan isi form registrasi terlebih dahulu.";
+    }
+?>
+
     <body>
         <div class="container">
             <h1>Data Registrasi User</h1>
             
-            <?php if (isset($_POST['submit'])): ?>
+            <?php if ($show_error == false): ?>
                 <div class="success-message">
                     Registrasi Berhasil!
                 </div>
                 
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Lengkap</th>
+                            <th>Umur</th>
+                            <th>Asal Kota</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php for ($i = 1; $i <= $umur; $i++): ?>
+                            <?php if ($i % 2 == 0 && $i != 4 && $i != 8): ?>
+                                <tr>
+                                    <td><?php echo $i; ?></td>
+                                    <td><?php echo $nama_lengkap; ?></td>
+                                    <td><?php echo $umur_display; ?></td>
+                                    <td><?php echo $asal_kota; ?></td>
+                                </tr>
+                            <?php endif; ?> 
+                        <?php endfor; ?>
+                    </tbody>
+                </table>
+                
                 <div class="back-button">
                     <a href="index.html">Kembali ke Form Registrasi</a>
                 </div>
+
             <?php else: ?>
-                <div style="text-align: center; color: #dc3545; padding: 20px;">
-                    <h3>Error: Data tidak ditemukan</h3>
-                    <p>Silakan isi form registrasi terlebih dahulu.</p>
-                    <div class="back-button">
-                        <a href="index.html">Kembali ke Form Registrasi</a>
-                    </div>
+                <div class="error-message">
+                    <h3>Error: Registrasi Gagal</h3>
+                    <p><?php echo $error_message; ?></p>
+                </div>
+                <div class="back-button">
+                    <a href="index.html">Kembali ke Form Registrasi</a>
                 </div>
             <?php endif; ?>
         </div>
